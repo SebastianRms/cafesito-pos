@@ -17,4 +17,4 @@
 - Definición de `apiUrl` para conexión con el Backend.
 - Creación de archivos de variables de entorno `.env` (Backend)
 - Configuración de cadena de conexión local para MongoDB y puerto del servidor (3001).
-- Definición de `JWT_SECRET` para manejo de sesiones seguras.
+- Definición de `JWT_SECRET` para manejo de sesiones seguras.   
