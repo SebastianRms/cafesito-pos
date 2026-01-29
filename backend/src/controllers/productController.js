@@ -1,5 +1,21 @@
 import Product from '../models/Product.js';
 
+export const createProduct = async (req, res, next) => {
+  try {
+    const productData = {
+      ...req.body,
+      created_by: req.user.id
+    };
+
+    const newProduct = new Product(productData);
+    const savedProduct = await newProduct.save();
+    res.status(201).json(savedProduct);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 async function getProducts(req, res, next) {
   try {
     const page = parseInt(req.query.page) || 1;
