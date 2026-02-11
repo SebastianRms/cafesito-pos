@@ -1,0 +1,12 @@
+<div class="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-4">
+  
+  <app-register-form 
+    [error]="errorMessage" 
+    (registerSubmit)="handleRegister($event)">
+  </app-register-form>
+
+  <p class="mt-6 text-slate-600 text-sm">
+    ¿Ya tienes una cuenta? 
+    <a routerLink="/login" class="text-orange-600 font-bold hover:underline">Inicia Sesión aquí</a>
+  </p>
+</div>

@@ -1,0 +1,9 @@
+  <div class="min-h-screen w-full flex items-center justify-center bg-slate-50">
+    
+    <app-login-form 
+      [error]="errorMessage" 
+      (loginSubmit)="handleLogin($event)"
+      class="w-full flex justify-center p-4">
+    </app-login-form>
+
+  </div>
