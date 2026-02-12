@@ -117,3 +117,62 @@ El botón de acción se deshabilita y cambia su leyenda a "SIN STOCK".
 Se verificó que el usuario no puede realizar interacciones de compra sobre ítems agotados.
 
 Resultado Global: Se garantiza que el negocio nunca venda productos que no tiene físicamente, mejorando la experiencia del cliente y la precisión del inventario.
+
+### Historia: H1 - Gestión de Catálogo (Admin)
+
+
+Fase 1: Verificación de Backend
+
+[x] GET /api/products: EXITOSO.
+
+El backend retorna la lista paginada con el formato { data: [...], total: n }.
+
+[x] POST /api/products (Creación): EXITOSO.
+
+Validación: No permite campos vacíos o tipos de datos incorrectos (Validación por createProductValidator).
+
+Seguridad: El middleware isAdmin bloquea peticiones sin privilegios.
+
+[x] PUT /api/products/:id (Edición): EXITOSO.
+
+Permite actualizar stock, precio y nombre de forma independiente.
+
+Se verificó que los cambios se reflejan inmediatamente en la base de datos (MongoDB).
+
+[x] DELETE /api/products/:id (Baja): EXITOSO.
+
+Eliminación física del registro confirmada.
+
+Pruebas de Integridad:
+
+Números Negativos: El backend/frontend bloquea precios o stock menores a 0 (EXITOSO).
+
+Caracteres Especiales: Los inputs numéricos están blindados contra texto (EXITOSO).
+
+Fase 2: Verificación de Frontend
+
+H1 - Interfaz de Administración y CRUD Reactivo
+
+[x] Renderizado de Tabla: OK.
+
+Uso de @for y @empty para manejo de listas y estados vacíos.
+
+Directiva [ngClass] aplicada correctamente para semáforo de stock (Rojo/Naranja/Verde).
+
+[x] Flujo de Creación/Edición: FINALIZADO.
+
+Se implementó un formulario reactivo unificado que alterna entre "Nuevo" y "Editar" según el estado.
+
+La función resetForm() limpia el estado y previene colisiones de datos entre ediciones.
+
+[x] Seguridad de Navegación: FINALIZADO.
+
+Botón Activo: El acceso a /admin/inventory solo es visible en el Navbar si el rol es admin vía *ngIf.
+
+Bloqueo por URL: Se verificó que un vendor es interceptado por el adminGuard y redirigido al POS si intenta entrar manualmente. (EXITOSO).
+
+[x] Persistencia: OK.
+
+Al guardar un cambio, la tabla se refresca automáticamente invocando de nuevo al ProductService.
+
+
