@@ -151,17 +151,17 @@ Historias de 2 SP: Tareas visuales o de formato (H7).
 1. Tablero inicial (Sprint 1: Infraestructura y Venta Base)
 To Do:
 
-Historia: H2 - Operar un carrito de ventas con cálculo de totales y snapshots.
+H1: Gestión de Productos (CRUD completo para Administradores: Crear, Editar, Eliminar productos).
 
-(Próxima) Historia: H8 - Restringir acceso a módulos sensibles mediante roles (Admin/Vendedor).
+H3: Control de Inventario: Alertas de stock bajo y actualización reactiva en el POS
 
 In Progress:
 
-Historia: H2 - Implementación de la lógica del carrito en el Frontend (WIP).
+Vacío
 
 In Review:
 
-(Vacío al inicio del desarrollo de la H2)
+Vacío 
 
 Done:
 
@@ -169,13 +169,36 @@ Historia: H0 - Setup inicial del proyecto (Angular, Tailwind, Routing).
 
 Historia: H0 - Estructura de servicios base y configuración de Interceptor.
 
-2. Flujo de una historia (ejemplo: "H2 - Flujo de Venta y Carrito")
-Paso 1: La historia se mueve de "To Do" a "In Progress" tras definir los componentes del carrito.
-Paso 2: El desarrollador crea la rama feature/carrito-ventas desde main.
-Paso 3: Se programa la lógica de sumar productos y congelar el precio (Snapshot).
-Paso 4: Se realizan pruebas locales: verificar que el total cambie al agregar/quitar ítems.
-Paso 5: Se sube el código y se abre un Pull Request (PR) → La historia pasa a "In Review".
-Paso 6: Se valida el cumplimiento del DoD (Definition of Done) y se hace el merge → Historia llega a "Done".
+Historia: H2 - Implementación de la lógica del carrito en el Frontend (WIP).
+
+Historia: H8 - Restringir acceso a módulos sensibles mediante roles (Admin/Vendedor).
+
+2. Flujo de las historias del Sprint 02
+Caso A: "H1 - Gestión de Catálogo (CRUD)"
+Paso 1: La historia se mueve a In Progress tras definir el diseño de la tabla de productos y el formulario de edición.
+
+Paso 2: Creación de la rama feature/h1-catalogo-productos desde main.
+
+Paso 3: Programación de los endpoints PUT y DELETE en el Backend y creación del panel de administración en el Frontend.
+
+Paso 4: Pruebas locales: Verificar que al editar un precio, las ventas antiguas (H2) mantengan su snapshot intacto y que solo el Admin tenga acceso.
+
+Paso 5: Subida de código y apertura de PR → La historia pasa a In Review.
+
+Paso 6: Validación del DoD (solo el Admin puede borrar productos) y merge → Done.
+
+Caso B: "H3 - Control de Inventario y Alertas"
+Paso 1: La historia se mueve a In Progress tras identificar el disparador (trigger) de actualización en el componente POS.
+
+Paso 2: Creación de la rama feature/h3-inventario-alertas desde main.
+
+Paso 3: Programación de la lógica reactiva: al cerrar el ticket de venta, se dispara una nueva petición a getProducts() o se actualiza el estado local de products.
+
+Paso 4: Pruebas locales: Verificar que al realizar una venta, el stock baje visualmente en la tarjeta del producto sin recargar el navegador.
+
+Paso 5: Subida de código y apertura de PR → La historia pasa a In Review.
+
+Paso 6: Validación del DoD (el stock se marca en rojo al llegar al umbral crítico) y merge → Done.
 
 3. Estrategia de ramas Git
 Convención de nombres:

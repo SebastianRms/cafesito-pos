@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
-    "client": "cd frontend && npm start",
+    "client": "cd frontend && ng serve -o",
     "server": "cd backend && npm run dev",
     "dev": "concurrently \"npm run client\" \"npm run server\""
   },

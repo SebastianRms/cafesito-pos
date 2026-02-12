@@ -35,20 +35,39 @@ export class PosPageComponent implements OnInit {
   }
 
   addToCart(product: any) {
-    // 1. Usar product_id (con guion bajo) para ser consistentes con el contrato
-    const existing = this.cart.find((item) => item.product_id === product._id);
+  const quantityToAdd = product.tempQuantity || 1; // Si no ha movido nada, es 1
+  const existing = this.cart.find((item) => item.product_id === product._id);
 
-    if (existing) {
-      existing.quantity++;
+  if (existing) {
+    // Validamos que la suma no supere el stock
+    if (existing.quantity + quantityToAdd <= product.stock) {
+      existing.quantity += quantityToAdd;
     } else {
-      this.cart.push({
-        product_id: product._id, // CAMBIADO: de productId a product_id
-        name: product.name,
-        price: product.price,
-        quantity: 1,
-      });
+      alert('No puedes agregar más de lo que hay en stock');
     }
+  } else {
+    this.cart.push({
+      product_id: product._id,
+      name: product.name,
+      price: product.price,
+      quantity: quantityToAdd,
+    });
   }
+  
+  // Opcional: Resetear el selector a 1 después de agregar
+  product.tempQuantity = 1;
+}
+
+  changeSelector(product: any, amount: number) {
+  if (!product.tempQuantity) product.tempQuantity = 1;
+  
+  const newQuantity = product.tempQuantity + amount;
+  
+  // Validamos que no sea menos de 1 y no supere el stock disponible
+  if (newQuantity >= 1 && newQuantity <= product.stock) {
+    product.tempQuantity = newQuantity;
+  }
+}
 
   processSale(method: PaymentMethod) {
     const saleRequest = {
@@ -60,10 +79,15 @@ export class PosPageComponent implements OnInit {
       })),
     };
 
-    console.log('📦 Enviando a la API:', JSON.stringify(saleRequest, null, 2));
 
     this.salesService.createSale(saleRequest).subscribe({
       next: (res) => {
+        this.cart.forEach(cartItem => {
+        const product = this.products.find(p => p._id === cartItem.product_id);
+        if (product) {
+          product.stock -= cartItem.quantity; 
+        }
+      });
         this.lastTicket = res.ticket;
         this.showTicket = true;
         this.cart = [];
@@ -79,4 +103,5 @@ export class PosPageComponent implements OnInit {
   get total(): number {
   return this.cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 }
+
 }

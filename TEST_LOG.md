@@ -83,4 +83,37 @@ Acción: Se integró el componente SaleTicketComponent que consume el objeto tic
 Resultado: El ticket se visualiza correctamente tras un código 201 Created, mostrando nombres de productos, subtotales y el método de pago elegido, cumpliendo con el contrato de API.
 
 
-### 
+### Historia: H3 - Control de Inventario Reactivo
+Fase 1: Verificación de Backend (Capa de Persistencia)
+
+Sincronización de Stock: EXITOSO. Cada venta procesada descuenta las unidades correspondientes en la base de datos de MongoDB.
+
+Validación de Disponibilidad: EXITOSO. El servidor retorna error 400/422 si la cantidad solicitada supera el stock actual, protegiendo la integridad del inventario.
+
+Fase 2: Verificación de Frontend (Interfaz de Usuario)
+
+[x] Selector de Cantidad Pre-venta: EXITOSO.
+
+Los botones + y - permiten ajustar la cantidad antes de agregar al carrito.
+
+Se validó que el selector no permite bajar de 1 ni subir más allá del stock disponible en ese momento.
+
+[x] Validación de Límite en Carrito: EXITOSO.
+
+Al intentar agregar más unidades de un producto que ya está en el carrito, el sistema suma las cantidades y bloquea la acción si el total excede el inventario.
+
+Resultado obtenido: Mensaje de alerta preventivo: "¡Híjole! No hay suficiente stock para agregar esa cantidad".
+
+[x] Reactividad Post-Venta: EXITOSO.
+
+Al confirmarse la venta (Status 201), el sistema descuenta automáticamente el stock de la lista de productos sin necesidad de recargar la página.
+
+[x] Control de Agotado (Stock Zero): EXITOSO.
+
+Al llegar a 0 unidades, la tarjeta del producto cambia de estado visual (opacidad reducida).
+
+El botón de acción se deshabilita y cambia su leyenda a "SIN STOCK".
+
+Se verificó que el usuario no puede realizar interacciones de compra sobre ítems agotados.
+
+Resultado Global: Se garantiza que el negocio nunca venda productos que no tiene físicamente, mejorando la experiencia del cliente y la precisión del inventario.
