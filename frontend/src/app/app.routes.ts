@@ -6,7 +6,10 @@ import { adminGuard } from './guards/auth/admin-guard.guard';
 export const routes: Routes = [
   {
     path: 'login',
-    loadComponent: () => import('./pages/login/login-page/login-page.component').then(m => m.LoginPageComponent)
+    loadComponent: () =>
+      import('./pages/login/login-page/login-page.component').then(
+        (m) => m.LoginPageComponent,
+      ),
   },
   {
     path: '',
@@ -15,16 +18,30 @@ export const routes: Routes = [
     children: [
       {
         path: 'pos',
-        loadComponent: () => import('./pages/pos/pos-page/pos-page.component').then(m => m.PosPageComponent)
+        loadComponent: () =>
+          import('./pages/pos/pos-page/pos-page.component').then(
+            (m) => m.PosPageComponent,
+          ),
       },
       // 🔐 RUTA PROTEGIDA POR ROL
       {
         path: 'register',
         canActivate: [adminGuard], // 2. Segundo: ¿Eres admin?
-        loadComponent: () => import('./pages/register/register-page/register-page.component').then(m => m.RegisterPageComponent)
+        loadComponent: () =>
+          import('./pages/register/register-page/register-page.component').then(
+            (m) => m.RegisterPageComponent,
+          ),
       },
-      { path: '', redirectTo: 'pos', pathMatch: 'full' }
-    ]
+      {
+        path: 'admin/inventory',
+        loadComponent: () =>
+          import('./pages/inventory/inventory/inventory.component').then(
+            (m) => m.InventoryComponent,
+          ),
+        canActivate: [authGuard, adminGuard], // Bloqueo total para no-admins
+      },
+      { path: '', redirectTo: 'pos', pathMatch: 'full' },
+    ],
   },
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: 'login' },
 ];
