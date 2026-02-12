@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import dbConection from './src/config/database.js';
 import router from './src/routes/index.js';
-import  errorHandler  from './src/middlewares/error-handler.js';
+import  errorHandler  from './src/middlewares/errorHandler.js';
 
 dotenv.config();
 const app = express();
@@ -16,11 +16,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api', router);
 
-
 dbConection(); 
-
-// 3. Ruta de prueba (Opcional, para ver si el servidor responde)
-
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
