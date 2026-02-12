@@ -1,0 +1,57 @@
+<div class="min-h-screen flex flex-col bg-slate-50">
+  
+  <header class="bg-slate-900 text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+      
+      <div class="flex items-center gap-10">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">☕</span>
+          <span class="font-black text-xl tracking-tighter text-orange-500 uppercase">Cafecito</span>
+        </div>
+
+        <nav class="hidden md:flex gap-2">
+          <a routerLink="/pos" 
+             routerLinkActive="bg-slate-800 text-orange-400"
+             class="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-slate-800">
+             Ventas
+          </a>
+          
+          <a *ngIf="authService.getRole() === 'admin'"
+             routerLink="/register" 
+             routerLinkActive="bg-slate-800 text-orange-400"
+             class="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-slate-800">
+             Usuarios
+          </a>
+        </nav>
+      </div>
+
+      <div class="flex items-center gap-4">
+        
+        <div class="hidden lg:block text-right pr-4 border-r border-slate-700">
+          <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest">Rol</p>
+          <p class="text-xs font-bold text-orange-400 capitalize">{{ authService.getRole() }}</p>
+        </div>
+
+        <div class="hidden sm:block text-right pr-4 border-r border-slate-700">
+          <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest">Estado</p>
+          <p class="text-xs font-bold text-green-400">En línea</p>
+        </div>
+
+        <button (click)="logout()" 
+          class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-black uppercase transition-transform active:scale-95 shadow-md">
+          Cerrar Sesión
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl mx-auto w-full p-6">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 py-4 text-center">
+    <p class="text-xs text-slate-400 font-medium">Cafecito Feliz POS © 2026 - Sprint 1: H8 Complete</p>
+  </footer>
+
+</div>

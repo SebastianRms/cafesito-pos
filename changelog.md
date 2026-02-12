@@ -1,20 +1,23 @@
-# Changelog - Cafesito POS
+# Changelog - Cafecito POS
 
-## [2026-01-21]
-### Agregado
-- **Orquestación:** Configuración de `package.json` en raíz con `concurrently` para ejecución simultánea de Front y Back.
-- **Backend:** Inicialización de API REST con Node.js/Express y dependencias de seguridad (JWT, bcrypt) y validación (Zod).
-- **Frontend:** Creación de proyecto Angular con integración de Bootstrap 5 para estilos responsivos.
-- **UX/UI:** Implementación de `bootstrap-icons` y `SweetAlert2` para notificaciones profesionales.
+## [En Progreso] - Sprint 1
 
-### Configurado
-- Archivo `.gitignore` global para protección de `node_modules` y variables de entorno `.env`.
-- Scripts de automatización (`install:all`, `dev`) para facilitar el despliegue local.
+### Finalizado (H8: Seguridad y Gestión de Accesos)
+- **Frontend:** Implementación de `RegisterPageComponent` y `RegisterFormComponent`.
+- **Seguridad:** Creación de `authGuard` y `adminGuard` para protección de rutas.
+- **UI:** Layout con navegación dinámica basada en roles (`*ngIf` para ocultar botones de Admin).
+- **Contrato:** Estandarización de errores 422 (Zod) y 401 para fallos de validación/auth.
 
-## [2026-01-21]
-### Agregado
-- Configuración de variables de entorno oficial de Angular en `src/environments/`.
-- Definición de `apiUrl` para conexión con el Backend.
-- Creación de archivos de variables de entorno `.env` (Backend)
-- Configuración de cadena de conexión local para MongoDB y puerto del servidor (3001).
-- Definición de `JWT_SECRET` para manejo de sesiones seguras.   
+---
+
+## [2026-01-28] - Infraestructura Backend y H1 (Inventario)
+- **H1:** Endpoint `POST /api/products` con validación de Zod y trazabilidad.
+- **Validación:** Migración total a Zod para esquemas de datos.
+- **Auth:** Middleware de JWT y protección de rutas por roles en el servidor.
+- **Global:** Manejador de errores centralizado (ZodError 422 / Server Error 500).
+
+## [2026-01-21 a 2026-01-27] - Cimientos del Proyecto
+- **Setup:** Configuración de Angular 17+ y Node.js con orquestación (Concurrently).
+- **DB:** Conexión a MongoDB y creación de modelos de Mongoose (`Product`, `User`).
+- **UI Inicial:** Integración de Tailwind CSS (o Bootstrap, según tu ajuste reciente) y SweetAlert2.
+- **Seed:** Script para llenado automático de base de datos de productos.

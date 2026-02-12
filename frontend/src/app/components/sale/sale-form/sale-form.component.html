@@ -1,0 +1,36 @@
+<div class="p-6 bg-white rounded-xl shadow-md border border-slate-200">
+  <h2 class="text-xl font-bold text-slate-800 mb-4">Finalizar Venta</h2>
+
+  <label class="block text-sm font-medium text-slate-700 mb-2">Método de Pago</label>
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <button 
+      type="button"
+      (click)="setMethod('cash')"
+      [class.ring-2]="method === 'cash'"
+      class="flex flex-col items-center p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-all ring-orange-500">
+      <span class="text-xs font-semibold uppercase">Efectivo</span>
+    </button>
+    
+    <button 
+      type="button"
+      (click)="setMethod('card')"
+      [class.ring-2]="method === 'card'"
+      class="flex flex-col items-center p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-all ring-orange-500">
+      <span class="text-xs font-semibold uppercase">Tarjeta</span>
+    </button>
+
+    <button 
+      type="button"
+      (click)="setMethod('transfer')"
+      [class.ring-2]="method === 'transfer'"
+      class="flex flex-col items-center p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-all ring-orange-500">
+      <span class="text-xs font-semibold uppercase">Transf.</span>
+    </button>
+  </div>
+
+  <button 
+    (click)="confirmSale()"
+    class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg shadow-orange-200">
+    Confirmar y Cobrar
+  </button>
+</div>
