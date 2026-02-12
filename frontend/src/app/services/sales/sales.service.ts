@@ -17,11 +17,12 @@ export class SalesService {
     return this.http.post(`${this.apiUrl}/customers`, { phone_or_email: query });
   }
 
-  createSale(saleData: { 
-    customerId: string | null; 
-    items: Array<{ productId: string; quantity: number }>; 
-    paymentMethod: PaymentMethod; 
-  }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/sales`, saleData);
-  }
+
+createSale(saleData: { 
+  customer_id: string | null; 
+  items: Array<{ product_id: string; quantity: number }>; 
+  payment_method: PaymentMethod; 
+}): Observable<any> {
+  return this.http.post(`${this.apiUrl}/sales`, saleData);
+}
 }
