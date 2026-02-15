@@ -238,17 +238,15 @@ El código sigue las convenciones del proyecto y ha sido integrado a main.
 
 ### Sprint 4 — Definition of Done del POS
 1. Definition of Done (aplica a TODAS las historias)
-[ ] Seguridad: La ruta está protegida por AuthGuard y el Interceptor adjunta el token JWT.
+[x] Seguridad: La ruta está protegida por AuthGuard y el Interceptor adjunta el token JWT.
 
-[ ] Persistencia: Los datos se guardan en la base de datos y se mantienen tras recargar.
+[x] Persistencia: Los datos se guardan en la base de datos y se mantienen tras recargar.
 
-[ ] Validación: El frontend y backend rechazan datos inválidos (precios < 0, stock insuficiente).
+[x] Validación: El frontend y backend rechazan datos inválidos (precios < 0, stock insuficiente).
 
-[ ] Feedback: El usuario recibe una notificación clara de éxito o un mensaje de error (400, 404, 500).
+[x] Feedback: El usuario recibe una notificación clara de éxito o un mensaje de error (400, 404, 500).
 
-[ ] Código: Pull Request revisado, sin console.logs y mergeado a main sin conflictos.
-
-[ ] (Opcional) Responsividad: La interfaz es usable en tablets y dispositivos móviles.
+[x] Código: Pull Request revisado, sin console.logs y mergeado a main sin conflictos.
 
 2. Plan de validación para historias
 Historia 1: Registrar cliente (H4)
@@ -326,25 +324,25 @@ Respuesta 400 (Insufficient Stock). El stock en la base de datos debe permanecer
 1. Mi checklist de hábitos
 Antes de cada commit:
 
-[ ] Limpieza de código: Eliminar console.log, comentarios basura y asegurar que los tipos de TypeScript están definidos.
+[x] Limpieza de código: Eliminar console.log, comentarios basura y asegurar que los tipos de TypeScript están definidos.
 
-[ ] Atomicidad: Verificar que el commit solo incluya cambios relacionados a una única tarea o historia.
+[x] Atomicidad: Verificar que el commit solo incluya cambios relacionados a una única tarea o historia.
 
 Antes de cada push:
 
-[ ] Smoke Test: Validar con el REST Client (ejemplos-api.http) que los endpoints clave siguen respondiendo correctamente.
+[x] Smoke Test: Validar con el REST Client (ejemplos-api.http) que los endpoints clave siguen respondiendo correctamente.
 
-[ ] Build Check: Ejecutar npm run build para garantizar que el código no rompe la compilación general.
+[x] Build Check: Ejecutar npm run build para garantizar que el código no rompe la compilación general.
 
 Antes de cada PR:
 
-[ ] Sincronización: Hacer git pull origin main y resolver conflictos localmente.
+[x] Sincronización: Hacer git pull origin main y resolver conflictos localmente.
 
-[ ] Documentación: Escribir una descripción clara de la funcionalidad implementada y los criterios de aceptación cumplidos.
+[x] Documentación: Escribir una descripción clara de la funcionalidad implementada y los criterios de aceptación cumplidos.
 
 Al revisar código de otros:
 
-[ ] Validación contra el DoD: Confirmar que se respetaron las reglas de negocio (como el stock y los snapshots).
+[x] Validación contra el DoD: Confirmar que se respetaron las reglas de negocio (como el stock y los snapshots).
 
 2. Pipeline del POS
 Trigger: Push a cualquier rama feature/ o Merge a la rama main.
