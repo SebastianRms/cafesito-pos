@@ -1,178 +1,89 @@
+### Log de Pruebas de Aceptación - MVP Cafecito Feliz
+
+
 ### Historia: H8 - Seguridad de Acceso
 Fase 1: Verificación de Backend
 
 [x] POST /api/auth/register: EXITOSO (con ajuste técnico).
 
-Incidencia encontrada: Error de validación 422 por inconsistencia de nombres entre el Model (name) y el Controller (display_name).
+Incidencia: Error 422 por inconsistencia entre Model (name) y Controller (display_name).
 
-Acción: Se estandarizaron los campos a name en toda la capa de autenticación para asegurar la persistencia.
+Acción: Estandarización total a campo name.
 
-[x] POST /api/auth/login: EXITOSO.
+[x] POST /api/auth/login: EXITOSO. Retorna ID y JWT correctamente.
 
-Resultado: Retorna id y token (JWT) correctamente.
-
-Pruebas de Seguridad: - Email inválido / Password inválido / Campos vacíos → Todos retornan 401 (Invalid email or password).
-
-Se confirma que el sistema no revela si el usuario existe o no, cumpliendo con estándares de seguridad.
-
-Fase 2: verificacion de Frontend
-
-H8 - Control de Acceso por Roles
-
-[x] Prueba de Login: OK (Status 200 + Token + Rol recibido).
-
-[x] Prueba de Errores: OK (401 unificado para email/pass inválidos o vacíos).
-
-[x] Validación de Roles: FINALIZADO.
-
-Se implementó adminGuard y authGuard.
-
-Se verificó que el sistema identifica correctamente el rol desde el AuthService.
-
-[x] Prueba de Rol: Logueado como vendor, intentar entrar a /register (ruta de creación de usuarios).
-
-Resultado obtenido: Redirección automática a /pos. El guard bloqueó el acceso manual por URL y el *ngIf ocultó el botón en el menú. (EXITOSO)
-
-[x] Prueba de Navegación Libre: Entrar a la página principal de Login o rutas públicas sin estar logueado.
-
-Resultado obtenido: La página de Login carga correctamente. Las rutas protegidas redirigen al Login si no hay token. (EXITOSO)
-
-###  Historia: H2 - Registro de Ventas y Carrito
-Fase 1: Verificación de Backend
-
-[x] POST /api/sales: EXITOSO (con ajuste técnico de persistencia).
-
-Incidencia encontrada: Error de validación de Mongoose al ejecutar product.save(). El middleware de validación bloqueaba la actualización del stock porque los productos antiguos carecían de campos obligatorios (description, created_by).
-
-Acción: Se migró la lógica de actualización de stock a Product.updateOne utilizando el operador atómico $inc. Esto permite afectar el inventario de forma segura ignorando validaciones de campos no relacionados con la transacción.
-
-[x] Persistencia de Snapshots: EXITOSO.
-
-Resultado: La venta almacena product_name y unit_price de forma independiente al modelo de productos, garantizando la integridad de los reportes históricos ante futuros cambios de precio.
-
-[x] Cálculos y Trazabilidad: FINALIZADO.
-
-Se verificó el cálculo automático de subtotal y total en el servidor.
-
-Se confirmó la asignación del user_id mediante el token de sesión (JWT) para auditoría de ventas.
-
-[x] Validación de Inventario: EXITOSO.
-
-El sistema retorna error 400 si la cantidad solicitada supera el stock disponible.
-
-Se verificó en base de datos que el stock disminuye únicamente tras la confirmación de la venta.
-
-Fase 2: Verificación de Integración y Frontend
-
-[x] Interceptor y Autenticación: EXITOSO.
-
-Acción: Se registró el authInterceptor en el appConfig de Angular mediante withInterceptors.
-
-Resultado: Se confirmó que todas las peticiones a /api/sales incluyen el header Authorization: Bearer [token], eliminando los errores 401 (Unauthorized) detectados inicialmente.
-
-[x] Gestión de Carrito y Mapeo de Datos: FINALIZADO.
-
-Ajuste Técnico: Se unificó la nomenclatura de las propiedades del carrito de productId a product_id para coincidir con el esquema esperado por el Backend y evitar errores de validación 422 (Zod).
-
-Cálculos Reactivos: Se implementó un getter de total en el componente para mostrar el monto exacto a cobrar al cajero antes de procesar el pago.
-
-[x] Generación y Visualización de Ticket: EXITOSO.
-
-Acción: Se integró el componente SaleTicketComponent que consume el objeto ticket generado dinámicamente por el Backend.
-
-Resultado: El ticket se visualiza correctamente tras un código 201 Created, mostrando nombres de productos, subtotales y el método de pago elegido, cumpliendo con el contrato de API.
-
-
-### Historia: H3 - Control de Inventario Reactivo
-Fase 1: Verificación de Backend (Capa de Persistencia)
-
-Sincronización de Stock: EXITOSO. Cada venta procesada descuenta las unidades correspondientes en la base de datos de MongoDB.
-
-Validación de Disponibilidad: EXITOSO. El servidor retorna error 400/422 si la cantidad solicitada supera el stock actual, protegiendo la integridad del inventario.
-
-Fase 2: Verificación de Frontend (Interfaz de Usuario)
-
-[x] Selector de Cantidad Pre-venta: EXITOSO.
-
-Los botones + y - permiten ajustar la cantidad antes de agregar al carrito.
-
-Se validó que el selector no permite bajar de 1 ni subir más allá del stock disponible en ese momento.
-
-[x] Validación de Límite en Carrito: EXITOSO.
-
-Al intentar agregar más unidades de un producto que ya está en el carrito, el sistema suma las cantidades y bloquea la acción si el total excede el inventario.
-
-Resultado obtenido: Mensaje de alerta preventivo: "¡Híjole! No hay suficiente stock para agregar esa cantidad".
-
-[x] Reactividad Post-Venta: EXITOSO.
-
-Al confirmarse la venta (Status 201), el sistema descuenta automáticamente el stock de la lista de productos sin necesidad de recargar la página.
-
-[x] Control de Agotado (Stock Zero): EXITOSO.
-
-Al llegar a 0 unidades, la tarjeta del producto cambia de estado visual (opacidad reducida).
-
-El botón de acción se deshabilita y cambia su leyenda a "SIN STOCK".
-
-Se verificó que el usuario no puede realizar interacciones de compra sobre ítems agotados.
-
-Resultado Global: Se garantiza que el negocio nunca venda productos que no tiene físicamente, mejorando la experiencia del cliente y la precisión del inventario.
-
-### Historia: H1 - Gestión de Catálogo (Admin)
-
-
-Fase 1: Verificación de Backend
-
-[x] GET /api/products: EXITOSO.
-
-El backend retorna la lista paginada con el formato { data: [...], total: n }.
-
-[x] POST /api/products (Creación): EXITOSO.
-
-Validación: No permite campos vacíos o tipos de datos incorrectos (Validación por createProductValidator).
-
-Seguridad: El middleware isAdmin bloquea peticiones sin privilegios.
-
-[x] PUT /api/products/:id (Edición): EXITOSO.
-
-Permite actualizar stock, precio y nombre de forma independiente.
-
-Se verificó que los cambios se reflejan inmediatamente en la base de datos (MongoDB).
-
-[x] DELETE /api/products/:id (Baja): EXITOSO.
-
-Eliminación física del registro confirmada.
-
-Pruebas de Integridad:
-
-Números Negativos: El backend/frontend bloquea precios o stock menores a 0 (EXITOSO).
-
-Caracteres Especiales: Los inputs numéricos están blindados contra texto (EXITOSO).
+[x] Pruebas de Seguridad: OK. Credenciales inválidas o campos vacíos retornan 401 unificado. No se revela existencia de usuarios.
 
 Fase 2: Verificación de Frontend
 
-H1 - Interfaz de Administración y CRUD Reactivo
+[x] Control de Acceso por Roles: FINALIZADO. Implementación de adminGuard y authGuard.
 
-[x] Renderizado de Tabla: OK.
+[x] Prueba de Rol: Logueado como vendor, el acceso manual a /register redirecciona a /pos. Botones administrativos ocultos mediante *ngIf.
 
-Uso de @for y @empty para manejo de listas y estados vacíos.
+[x] Navegación Anónima: Rutas protegidas redirigen al Login si no existe token activo.
 
-Directiva [ngClass] aplicada correctamente para semáforo de stock (Rojo/Naranja/Verde).
+### Historia: H2 - Registro de Ventas y Carrito
+Fase 1: Verificación de Backend
 
-[x] Flujo de Creación/Edición: FINALIZADO.
+[x] POST /api/sales: EXITOSO.
 
-Se implementó un formulario reactivo unificado que alterna entre "Nuevo" y "Editar" según el estado.
+Incidencia: Error de validación en product.save() por campos antiguos obligatorios.
 
-La función resetForm() limpia el estado y previene colisiones de datos entre ediciones.
+Acción: Uso de Product.updateOne con $inc para bypass de validaciones no relacionadas.
 
-[x] Seguridad de Navegación: FINALIZADO.
+[x] Persistencia de Snapshots: EXITOSO. La venta guarda precio y nombre del momento, protegiendo reportes históricos.
 
-Botón Activo: El acceso a /admin/inventory solo es visible en el Navbar si el rol es admin vía *ngIf.
+[x] Validación de Inventario: El sistema bloquea ventas (Error 400) si superan el stock físico.
 
-Bloqueo por URL: Se verificó que un vendor es interceptado por el adminGuard y redirigido al POS si intenta entrar manualmente. (EXITOSO).
+Fase 2: Verificación de Integración
 
-[x] Persistencia: OK.
+[x] Interceptor: EXITOSO. authInterceptor añade el token JWT en el header de todas las peticiones de venta.
 
-Al guardar un cambio, la tabla se refresca automáticamente invocando de nuevo al ProductService.
+[x] Gestión de Carrito: Unificación de productId a product_id para cumplir con esquema Zod (evita Error 422).
 
+[x] Totalizadores: Getter reactivo en el POS muestra el monto exacto antes de confirmar el pago.
 
+### Historia: H3 - Control de Inventario Reactivo
+Fase 1: Persistencia
+
+[x] Sincronización: Cada venta descuenta unidades reales en MongoDB de forma atómica.
+
+Fase 2: Interfaz de Usuario
+
+[x] Selector de Cantidad: OK. No permite cantidades < 1 ni > al stock disponible.
+
+[x] Reactividad Post-Venta: Al recibir Status 201, la lista de productos actualiza el stock visualmente sin recargar.
+
+[x] Control de Agotado: Al llegar a 0, la tarjeta aplica opacidad, deshabilita el botón y muestra leyenda "SIN STOCK".
+
+### Historia: H1 - Gestión de Catálogo (Admin)
+Fase 1: Verificación de Backend
+
+[x] CRUD de Productos: EXITOSO. Operaciones GET, POST, PUT y DELETE verificadas con el middleware isAdmin.
+
+[x] Blindaje de Datos: Bloqueo de precios/stock negativos y prevención de inyección de texto en campos numéricos.
+
+Fase 2: Interfaz Admin
+
+[x] Renderizado: Uso de semáforo de stock (Rojo/Naranja/Verde) mediante [ngClass].
+
+[x] Formulario Reactivo: Alternancia fluida entre creación y edición con limpieza de estado vía resetForm().
+
+### Historia: H4 - Registro de Clientes y Fidelización (Sprint 03)
+Fase 1: Verificación de Backend
+
+[x] Estrategia Get or Create: EXITOSO. Búsqueda y registro unificado en un solo endpoint.
+
+[x] Lógica de Descuentos: El servidor aplica 5%, 10% o 15% según purchases_count previo.
+
+Fase 2: Verificación de Frontend e Integración
+
+[x] Validación de Captura: EXITOSO. Se intentaron registrar datos mal formados (teléfonos cortos/emails sin @).
+
+Resultado: El sistema detecta el Error 422 y lanza un alert() informativo bloqueando el envío.
+
+[x] Flujo de Registro: EXITOSO. Ante un Error 404 (cliente no encontrado), se habilita el campo de nombre para registro inmediato sin abandonar la venta.
+
+[x] Ticket de Lealtad: FINALIZADO. Visualización correcta de descuentos y mensaje de beneficio de socio en el ticket final.
+
+[x] Limpieza de Sesión: EXITOSO. El SaleFormComponent resetea los datos del cliente tras confirmar la venta, previniendo errores en la siguiente transacción.
