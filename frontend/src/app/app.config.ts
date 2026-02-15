@@ -6,7 +6,6 @@ import {
   withFetch,
   withInterceptors,
 } from '@angular/common/http';
-import { errorInterceptor } from './interceptors/error/error';
 import { authInterceptor } from './interceptors/auth/auth';
 
 export const appConfig: ApplicationConfig = {

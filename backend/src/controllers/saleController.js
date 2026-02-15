@@ -5,61 +5,60 @@ import Customer from "../models/Customer.js";
 export const createSale = async (req, res) => {
   try {
     const { customer_id, items, payment_method } = req.body;
-    const user_id = req.user.id; // Obtenido del authMiddleware
+    const user_id = req.user.id; 
 
     let subtotal = 0;
     const saleItems = [];
 
     for (const item of items) {
-      // 1. Usar findById (Mongoose) en lugar de findByPk
       const product = await Product.findById(item.product_id);
 
       if (!product || product.stock < item.quantity) {
         return res.status(400).json({
-          message: `Stock insuficiente o producto no encontrado: ${product?.name || "ID: " + item.product_id}`,
+          message: `Stock insuficiente o no encontrado: ${product?.name || item.product_id}`,
         });
       }
 
-      // 2. Preparar el Snapshot para el array de items
       const lineTotal = product.price * item.quantity;
       subtotal += lineTotal;
 
       saleItems.push({
         product_id: product._id,
-        product_name: product.name, // Snapshot del nombre
-        unit_price: product.price, // Snapshot del precio
+        product_name: product.name,
+        unit_price: product.price,
         quantity: item.quantity,
         line_total: lineTotal,
       });
 
-      // 3. Actualizar stock (Mongoose style)
-      product.stock -= item.quantity;
       await Product.updateOne(
         { _id: product._id },
         { $inc: { stock: -item.quantity } },
       );
     }
 
-    // 4. Lógica de Descuentos
-    let total = subtotal;
-    let discount_amount = 0;
     let discount_percent = 0;
 
     if (customer_id) {
       const customer = await Customer.findById(customer_id);
       if (customer) {
-        if (customer.purchasesCount >= 5) {
+        const count = customer.purchases_count || 0;
+
+        if (count >= 1 && count <= 3) {
+          discount_percent = 5;
+        } else if (count >= 4 && count <= 7) {
           discount_percent = 10;
-          discount_amount = subtotal * 0.1;
-          total = subtotal - discount_amount;
+        } else if (count >= 8) {
+          discount_percent = 15;
         }
-        // Incrementar contador de compras
-        customer.purchasesCount += 1;
+
+        customer.purchases_count += 1;
         await customer.save();
       }
     }
 
-    // 5. Crear la venta en la BD
+    const discount_amount = subtotal * (discount_percent / 100);
+    const total = subtotal - discount_amount;
+
     const sale = await Sale.create({
       customer_id,
       user_id,
@@ -75,6 +74,7 @@ export const createSale = async (req, res) => {
       ...sale.toJSON(),
       ticket: sale.generateTicket(),
     });
+    
   } catch (error) {
     res.status(500).json({ message: "Error interno", error: error.message });
   }

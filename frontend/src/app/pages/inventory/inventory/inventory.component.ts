@@ -13,14 +13,12 @@ export class InventoryComponent implements OnInit {
   private productService = inject(ProductService);
   private fb = inject(FormBuilder);
 
-  // Aquí guardaremos los productos que vienen del back
   products: any[] = [];
   productForm: FormGroup;
   isModalOpen = false;
   editingProductId: string | null = null;
 
   constructor() {
-    // Definimos los campos del formulario
     this.productForm = this.fb.group({
       name: ['', [Validators.required]],
       price: [0, [Validators.required, Validators.min(1)]],
@@ -35,7 +33,6 @@ export class InventoryComponent implements OnInit {
   loadProducts() {
     this.productService.getProducts().subscribe({
       next: (res) => {
-        // Guardamos los datos. Recuerda que tu back devuelve { data: [...] }
         this.products = res.data;
       },
       error: (err) => {
@@ -44,7 +41,6 @@ export class InventoryComponent implements OnInit {
     });
   }
 
-  // Por ahora solo deja estas funciones vacías para que no truene el HTML
   deleteProduct(id: string) {
     if (confirm('¿Eliminar producto?')) {
       this.productService.deleteProduct(id).subscribe(() => this.loadProducts());
@@ -87,7 +83,6 @@ export class InventoryComponent implements OnInit {
     const productData = this.productForm.value;
 
     if (this.editingProductId) {
-      // EDITAR
       this.productService.updateProduct(this.editingProductId, productData).subscribe({
         next: () => {
           this.loadProducts();
@@ -95,7 +90,6 @@ export class InventoryComponent implements OnInit {
         }
       });
     } else {
-      // CREAR
       this.productService.createProduct(productData).subscribe({
         next: () => {
           this.loadProducts();

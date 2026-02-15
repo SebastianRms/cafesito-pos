@@ -13,7 +13,7 @@ const seedProducts = [
 const runSeed = async () => {
     try {
         await mongoose.connect(process.env.DB_CONNECTION_STRING);
-        await Product.deleteMany(); // Limpia la base de datos
+        await Product.deleteMany(); 
         await Product.insertMany(seedProducts);
         console.log('✅ Datos sembrados con éxito');
         process.exit();

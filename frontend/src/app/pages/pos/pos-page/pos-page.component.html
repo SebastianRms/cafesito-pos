@@ -1,76 +1,85 @@
 <div class="min-h-screen bg-slate-100 p-4 md:p-8">
   <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-    
+
     <div class="lg:col-span-2">
-      <h1 class="text-2xl font-black text-slate-800 mb-6 uppercase tracking-tight">Cafecito Feliz POS ☕</h1>
-      
+      <h1 class="text-2xl font-black text-slate-800 mb-6 uppercase tracking-tight">Cafecito Feliz</h1>
+
       <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-  @for (product of products; track product._id) {
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-      <span class="block font-bold text-slate-700">{{ product.name }}</span>
-      <span class="block text-orange-600 font-medium mb-1">${{ product.price }}</span>
-      <span class="text-[10px] text-slate-400 uppercase mb-3">Stock: {{ product.stock }}</span>
+        @for (product of products; track product._id) {
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+          <span class="block font-bold text-slate-700">{{ product.name }}</span>
+          <span class="block text-orange-600 font-medium mb-1">${{ product.price }}</span>
+          <span class="text-[10px] text-slate-400 uppercase mb-3">Stock: {{ product.stock }}</span>
 
-      <div class="flex items-center justify-between bg-slate-100 rounded-lg p-1 mb-3">
-        <button (click)="changeSelector(product, -1)" 
-                class="w-8 h-8 flex items-center justify-center font-bold text-slate-600">-</button>
-        
-        <span class="font-bold text-slate-800">{{ product.tempQuantity || 1 }}</span>
-        
-        <button (click)="changeSelector(product, 1)" 
-                class="w-8 h-8 flex items-center justify-center font-bold text-slate-600">+</button>
-      </div>
+          <div class="flex items-center justify-between bg-slate-100 rounded-lg p-1 mb-3">
+            <button (click)="changeSelector(product, -1)"
+              class="w-8 h-8 flex items-center justify-center font-bold text-slate-600">-</button>
 
-      <button (click)="addToCart(product)"
-              [disabled]="product.stock === 0"
-              class="w-full bg-orange-500 text-white text-xs font-bold py-2 rounded-lg hover:bg-orange-600 transition-colors disabled:bg-slate-300">
-        {{ product.stock === 0 ? 'AGOTADO' : 'AGREGAR' }}
-      </button>
-    </div>
-  }
-</div>
-    </div>
+            <span class="font-bold text-slate-800">{{ product.tempQuantity || 1 }}</span>
 
-<aside class="space-y-6">
-  <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200">
-    <h2 class="font-bold mb-4 border-b pb-2 uppercase text-slate-600 tracking-wider text-sm">
-      Tu Pedido
-    </h2>
-    
-    <ul class="space-y-3 mb-6 max-h-80 overflow-y-auto block">
-      @for (item of cart; track item.product_id) {
-        <li class="flex justify-between items-start bg-slate-50 p-2 rounded-lg border border-slate-100">
-          <div class="flex flex-col">
-            <span class="font-bold text-slate-800 text-sm">{{ item.name }}</span>
-            <span class="text-slate-500 text-[10px]">${{ item.price }} x {{ item.quantity }}</span>
+            <button (click)="changeSelector(product, 1)"
+              class="w-8 h-8 flex items-center justify-center font-bold text-slate-600">+</button>
           </div>
-          <span class="font-mono font-bold text-slate-700 text-sm">
-            ${{ item.price * item.quantity }}
-          </span>
-        </li>
-      } @empty {
-        <li class="text-slate-400 italic text-center py-8 text-sm">Carrito vacío</li>
-      }
-    </ul>
 
-    <div class="border-t border-slate-200 pt-4 mt-4 mb-6">
-      <div class="flex justify-between items-center">
-        <span class="text-slate-500 font-bold uppercase text-[10px]">Total a Pagar</span>
-        <span class="font-black text-orange-600 text-2xl tracking-tight">
-          ${{ total }}
-        </span>
+          <button (click)="addToCart(product)" [disabled]="product.stock === 0"
+            class="w-full bg-orange-500 text-white text-xs font-bold py-2 rounded-lg hover:bg-orange-600 transition-colors disabled:bg-slate-300">
+            {{ product.stock === 0 ? 'AGOTADO' : 'AGREGAR' }}
+          </button>
+        </div>
+        }
       </div>
     </div>
 
-    <app-sale-form (onConfirm)="processSale($event)"></app-sale-form>
-  </div>
-</aside>
+    <aside class="space-y-6">
+      <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200">
+        <h2 class="font-bold mb-4 border-b pb-2 uppercase text-slate-600 tracking-wider text-sm">
+          Tu Pedido
+        </h2>
+
+<ul class="space-y-3 mb-6 max-h-80 overflow-y-auto block">
+  @for (item of cart; track item.product_id) {
+    <li class="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-100 group">
+      <div class="flex flex-col">
+        <span class="font-bold text-slate-800 text-sm">{{ item.name }}</span>
+        <span class="text-slate-500 text-[10px]">${{ item.price }} x {{ item.quantity }}</span>
+      </div>
+      
+      <div class="flex items-center gap-3">
+        <span class="font-mono font-bold text-slate-700 text-sm">
+          ${{ item.price * item.quantity }}
+        </span>
+        
+        <button 
+          (click)="removeFromCart(item.product_id)"
+          class="text-slate-300 hover:text-red-600 p-1 transition-colors"
+          title="Eliminar producto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
+      </div>
+    </li>
+  } @empty {
+    <li class="text-slate-400 italic text-center py-8 text-sm">Carrito vacío</li>
+  }
+</ul>
+        <div class="border-t border-slate-200 pt-4 mt-4 mb-6">
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500 font-bold uppercase text-[10px]">Total a Pagar</span>
+            <span class="font-black text-orange-600 text-2xl tracking-tight">
+              ${{ total }}
+            </span>
+          </div>
+        </div>
+
+        <app-sale-form (onConfirm)="processSale($event)"
+          (onCustomerSelected)="selectedCustomerId = $event"></app-sale-form>
+      </div>
+    </aside>
 
   </div>
 </div>
 @if (showTicket && lastTicket) {
-  <app-sale-ticket 
-    [ticket]="lastTicket" 
-    (onClose)="showTicket = false">
-  </app-sale-ticket>
+<app-sale-ticket [ticket]="lastTicket" (onClose)="showTicket = false">
+</app-sale-ticket>
 }

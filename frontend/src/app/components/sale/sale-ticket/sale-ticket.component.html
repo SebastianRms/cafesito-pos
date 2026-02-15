@@ -44,9 +44,21 @@
           <span>TOTAL:</span>
           <span>${{ ticket.total }}</span>
         </div>
+      </div> @if (ticket.discount !== '0% (-$0)') {
+        <div class="mt-6 p-3 bg-orange-50 rounded-lg border border-orange-100 text-center">
+          <p class="text-[10px] font-black text-orange-800 uppercase">¡Beneficio de Socio Aplicado!</p>
+          <p class="text-[9px] text-orange-600 italic leading-tight">
+            Gracias por ser cliente frecuente. Tus compras acumuladas se han actualizado.
+          </p>
+        </div>
+      }
+
+      <div class="text-center mt-6">
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Método de Pago</p>
+        <p class="text-xs font-bold text-slate-700 uppercase">{{ ticket.paymentMethod }}</p>
       </div>
 
-      <p class="text-center text-[10px] mt-6 text-slate-400 italic">¡Gracias por su compra en Cafecito Feliz!</p>
+      <p class="text-center text-[10px] mt-6 text-slate-400 italic">¡Gracias por su compra en {{ ticket.storeName }}!</p>
     </div>
 
     <button (click)="onClose.emit()" 

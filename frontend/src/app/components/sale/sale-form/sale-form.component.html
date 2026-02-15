@@ -1,6 +1,29 @@
 <div class="p-6 bg-white rounded-xl shadow-md border border-slate-200">
   <h2 class="text-xl font-bold text-slate-800 mb-4">Finalizar Venta</h2>
+  <div class="customer-section mb-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
+  <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Cliente</label>
+  
+  <div *ngIf="!selectedCustomer" class="flex flex-col gap-2">
+    <div class="flex gap-2">
+      <input type="text" [(ngModel)]="customerQuery" placeholder="Tel o Email..." class="flex-1 p-2 border rounded text-sm">
+      <button type="button" (click)="checkCustomer()" class="bg-slate-800 text-white px-3 rounded">Buscar</button>
+    </div>
+    
+    <div *ngIf="isNew" class="p-2 bg-orange-50 border border-orange-100 rounded animate-fade-in">
+      <p class="text-[10px] text-orange-600 mb-1 font-bold">No encontrado. ¿Registrar?</p>
+      <input type="text" [(ngModel)]="customerName" placeholder="Nombre..." class="w-full p-2 border rounded text-sm mb-2">
+      <button type="button" (click)="confirmNewCustomer()" class="w-full bg-orange-500 text-white text-[10px] py-1.5 rounded font-bold uppercase">Registrar y Aplicar</button>
+    </div>
+  </div>
 
+  <div *ngIf="selectedCustomer" class="flex justify-between items-center bg-slate-900 text-white p-2 rounded-lg">
+    <div>
+      <p class="text-[10px] font-bold text-orange-400">Hola!!</p>
+      <p class="text-xs font-bold">{{ selectedCustomer.name }}</p>
+    </div>
+    <button type="button" (click)="removeCustomer()" class="text-red-400 text-lg ml-2">✕</button>
+  </div>
+</div>
   <label class="block text-sm font-medium text-slate-700 mb-2">Método de Pago</label>
   <div class="grid grid-cols-3 gap-4 mb-6">
     <button 
@@ -28,6 +51,8 @@
     </button>
   </div>
 
+
+  
   <button 
     (click)="confirmSale()"
     class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg shadow-orange-200">

@@ -14,7 +14,7 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
-    canActivate: [authGuard], // 1. Primero: ¿Estás logueado?
+    canActivate: [authGuard],
     children: [
       {
         path: 'pos',
@@ -23,10 +23,9 @@ export const routes: Routes = [
             (m) => m.PosPageComponent,
           ),
       },
-      // 🔐 RUTA PROTEGIDA POR ROL
       {
         path: 'register',
-        canActivate: [adminGuard], // 2. Segundo: ¿Eres admin?
+        canActivate: [adminGuard],
         loadComponent: () =>
           import('./pages/register/register-page/register-page.component').then(
             (m) => m.RegisterPageComponent,
@@ -38,7 +37,7 @@ export const routes: Routes = [
           import('./pages/inventory/inventory/inventory.component').then(
             (m) => m.InventoryComponent,
           ),
-        canActivate: [authGuard, adminGuard], // Bloqueo total para no-admins
+        canActivate: [authGuard, adminGuard],
       },
       { path: '', redirectTo: 'pos', pathMatch: 'full' },
     ],

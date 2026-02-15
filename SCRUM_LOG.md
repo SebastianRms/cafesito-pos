@@ -38,7 +38,7 @@ Historia Refinada: Como Vendedor, quiero operar un carrito de ventas que me perm
 
 Criterio de Aceptación 1: Dado que agrego productos al carrito, cuando selecciono diferentes ítems, entonces el sistema debe calcular el total en tiempo real y permitir visualizar un desglose antes de finalizar la venta.
 
-Criterio de Aceptación 2: Dado que se confirma la venta, cuando el sistema procesa el pago simulado, entonces debe generar un registro único de venta y disparar la actualización de stock en la base de datos.
+Criterio de Aceptación 2: Dado qu e se confirma la venta, cuando el sistema procesa el pago simulado, entonces debe generar un registro único de venta y disparar la actualización de stock en la base de datos.
 
 3. Validación de Existencias en Venta (Historia 3)
 Historia Refinada: Como Sistema, quiero validar la disponibilidad de stock durante el proceso de compra para impedir la venta de productos agotados y garantizar la integridad del inventario.
