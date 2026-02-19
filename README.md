@@ -13,7 +13,7 @@ El proyecto resuelve tres problemas críticos:
 ### Tech Stack
 Sistema desarrollado bajo el stack **MERN** con enfoque reactivo:
 
-* **Frontend:** Angular 18+ (Signals, Standalone Components, Tailwind CSS).
+* **Frontend:** Angular 18+ (Standalone Components, Tailwind CSS).
 * **Backend:** Node.js & Express.
 * **Base de Datos:** MongoDB (Modelado con Mongoose).
 * **Seguridad:** Autenticación JWT y validaciones con Zod.
