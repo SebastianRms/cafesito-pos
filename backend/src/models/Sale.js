@@ -49,7 +49,6 @@ const saleSchema = new mongoose.Schema(
   },
 );
 
-// Configuración para que el JSON siempre cumpla el contrato
 saleSchema.set('toJSON', {
   transform: (doc, ret) => {
     ret.sale_id = ret._id;
@@ -60,7 +59,6 @@ saleSchema.set('toJSON', {
   }
 });
 
-// Método para generar el ticket sin ensuciar el controlador
 saleSchema.methods.generateTicket = function() {
   return {
     saleId: this._id,

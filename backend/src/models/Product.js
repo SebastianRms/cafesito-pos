@@ -9,7 +9,7 @@ const productSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
     },
     price: {
@@ -30,7 +30,8 @@ const productSchema = new mongoose.Schema(
     ],
     category: {
       type: String,
-      required: true,
+      required: false,
+      default: null,
     },
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
