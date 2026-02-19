@@ -8,6 +8,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './sale-ticket.component.css'
 })
 export class SaleTicketComponent {
-  @Input() ticket: any; // Aquí recibiremos el objeto 'ticket' del contrato
+  @Input() ticket: any; 
   @Output() onClose = new EventEmitter<void>();
 }

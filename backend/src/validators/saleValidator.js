@@ -11,4 +11,4 @@ export const createSaleValidator = z.object({
       quantity: z.number().int().min(1, "Quantity must be at least 1")
     })
   ).min(1, "The sale must have at least one item"),
-}).strict();
+})

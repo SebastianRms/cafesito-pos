@@ -87,7 +87,6 @@ export class InventoryComponent implements OnInit {
     const productData = this.productForm.value;
 
     if (this.editingProductId) {
-      // EDITAR
       this.productService.updateProduct(this.editingProductId, productData).subscribe({
         next: () => {
           this.loadProducts();
@@ -95,7 +94,6 @@ export class InventoryComponent implements OnInit {
         }
       });
     } else {
-      // CREAR
       this.productService.createProduct(productData).subscribe({
         next: () => {
           this.loadProducts();
