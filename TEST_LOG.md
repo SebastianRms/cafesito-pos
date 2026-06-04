@@ -1,89 +1,93 @@
-### Log de Pruebas de Aceptación - MVP Cafecito Feliz
+# 🧪 Cafecito POS - Registro de Calidad y Pruebas (Test Log)
 
+Este documento registra los resultados de las pruebas de aceptación y la suite de pruebas unitarias automatizadas implementadas para asegurar la robustez, seguridad y consistencia lógica de **Cafecito POS**.
 
-### Historia: H8 - Seguridad de Acceso
-Fase 1: Verificación de Backend
+---
 
-[x] POST /api/auth/register: EXITOSO (con ajuste técnico).
+## 🚦 Resumen Ejecutivo del Estado del Software
 
-Incidencia: Error 422 por inconsistencia entre Model (name) y Controller (display_name).
+| Entorno | Framework | Pruebas Ejecutadas | Resultados | Estado |
+| :--- | :--- | :---: | :---: | :---: |
+| **Backend (API REST)** | Jest | 4 Specs | 4 Pasadas, 0 Fallos | 🟢 Verde (100%) |
+| **Frontend (Angular)** | Jasmine + Karma | 28 Specs | 28 Pasadas, 0 Fallos | 🟢 Verde (100%) |
 
-Acción: Estandarización total a campo name.
+---
 
-[x] POST /api/auth/login: EXITOSO. Retorna ID y JWT correctamente.
+## ⚙️ Pruebas Automatizadas (Unit & Integration Testing)
 
-[x] Pruebas de Seguridad: OK. Credenciales inválidas o campos vacíos retornan 401 unificado. No se revela existencia de usuarios.
+### Suite del Backend (Jest)
+Ubicación de pruebas clave: [saleService.test.js](file:///c:/Users/sebas/Documents/proyectos/MEAN/cafesito-pos/backend/src/services/saleService.test.js)
 
-Fase 2: Verificación de Frontend
+1. **`debería procesar una venta y descontar stock correctamente`**:
+   - Valida que al enviar productos con stock suficiente, la transacción se guarde, se descuente el inventario de MongoDB y se genere el ticket inmutable.
+2. **`debería rechazar la venta si no hay stock suficiente`**:
+   - Asegura la atomicidad: una venta con stock excedido retorna un error `400` y revierte cualquier descuento previo de stock de otros productos.
+3. **`debería aplicar el descuento correspondiente por compras previas`**:
+   - Certifica que la lógica matemática del negocio aplique el 5%, 10% o 15% dependiendo del historial del socio y que actualice el acumulador del cliente.
+4. **`debería procesar la venta sin sesión transaccional si MongoDB corre en modo Standalone`**:
+   - Garantiza la resiliencia en despliegues simplificados locales donde no hay un Replica Set configurado.
 
-[x] Control de Acceso por Roles: FINALIZADO. Implementación de adminGuard y authGuard.
+---
 
-[x] Prueba de Rol: Logueado como vendor, el acceso manual a /register redirecciona a /pos. Botones administrativos ocultos mediante *ngIf.
+### Suite del Frontend (Jasmine + Karma)
+Ubicación de pruebas clave:
+- [cart.store.spec.ts](file:///c:/Users/sebas/Documents/proyectos/MEAN/cafesito-pos/frontend/src/app/services/sales/cart.store.spec.ts)
+- [pos-page.component.spec.ts](file:///c:/Users/sebas/Documents/proyectos/MEAN/cafesito-pos/frontend/src/app/pages/pos/pos-page/pos-page.component.spec.ts)
+- [inventory.component.spec.ts](file:///c:/Users/sebas/Documents/proyectos/MEAN/cafesito-pos/frontend/src/app/pages/inventory/inventory/inventory.component.spec.ts)
+- [auth.service.spec.ts](file:///c:/Users/sebas/Documents/proyectos/MEAN/cafesito-pos/frontend/src/app/services/auth/auth.service.spec.ts)
 
-[x] Navegación Anónima: Rutas protegidas redirigen al Login si no existe token activo.
+#### 1. Lógica del Carrito (`CartStore`)
+* `[x]` Debería inicializarse con un carrito vacío.
+* `[x]` Debería agregar un producto al carrito actualizando el subtotal.
+* `[x]` Debería acumular cantidades al agregar el mismo producto sin exceder el stock físico.
+* `[x]` Debería quitar un producto específico del pedido.
+* `[x]` Debería limpiar el carrito al cancelar o finalizar la venta.
 
-### Historia: H2 - Registro de Ventas y Carrito
-Fase 1: Verificación de Backend
+#### 2. Gestión de Seguridad (`AuthService` & `AuthGuard`)
+* `[x]` Debería ser creado.
+* `[x]` Debería inicializarse con un estado no autenticado (vacío).
+* `[x]` Debería actualizar el estado y almacenar el token tras un login exitoso.
+* `[x]` Debería limpiar el estado, el token y el rol de usuario al hacer logout.
+* `[x]` **Guard**: Debe permitir el acceso (`true`) si el usuario está logueado.
+* `[x]` **Guard**: Debe denegar el acceso y redirigir a `/login` si no hay sesión.
 
-[x] POST /api/sales: EXITOSO.
+#### 3. Punto de Venta (`PosPageComponent`)
+* `[x]` Debería crearse y cargar el catálogo de productos llamando a `salesService`.
+* `[x]` Debería cambiar la cantidad temporal en la tarjeta del producto respetando límites de stock sin mutar datos.
+* `[x]` Debería agregar productos al `CartStore` y reiniciar la cantidad temporal a 1.
+* `[x]` Debería buscar un cliente y actualizar el estado reactivo de la venta.
+* `[x]` Debería establecer `isNewCustomer` si la búsqueda de socio arroja un error `404` (no encontrado).
+* `[x]` Debería procesar la venta registrando primero al cliente si es un socio nuevo.
+* `[x]` Debería procesar la venta directamente si es un cliente existente.
 
-Incidencia: Error de validación en product.save() por campos antiguos obligatorios.
+#### 4. Formulario de Cierre (`SaleFormComponent`)
+* `[x]` Debería disparar un warning de toast si intenta confirmar un nuevo cliente sin ingresar su nombre.
+* `[x]` Debería cambiar el método de pago localmente (`cash`, `card`, `transfer`).
+* `[x]` Debería emitir `confirmSaleEvent` con la estructura de datos correcta al cobrar.
+* `[x]` Debería emitir `searchCustomerEvent` al hacer clic en "Validar".
+* `[x]` Debería emitir `resetCustomerEvent` y limpiar el estado al llamar a `clearCustomer`.
 
-Acción: Uso de Product.updateOne con $inc para bypass de validaciones no relacionadas.
+#### 5. Gestión del Inventario (`InventoryComponent`)
+* `[x]` Debería crearse, inyectar el servicio de productos y listar el inventario disponible del Administrador.
 
-[x] Persistencia de Snapshots: EXITOSO. La venta guarda precio y nombre del momento, protegiendo reportes históricos.
+---
 
-[x] Validación de Inventario: El sistema bloquea ventas (Error 400) si superan el stock físico.
+## 📈 Pruebas de Aceptación por Historia de Usuario (MVP Validation)
 
-Fase 2: Verificación de Integración
+### H8: Seguridad de Acceso
+*   **Prueba de Roles**: Logueado con rol `vendor`, el acceso manual a la URL `/admin/inventory` es rechazado por el `adminGuard` y redirige a `/pos`. Los botones administrativos en la cabecera se ocultan mediante directivas estructurales del framework.
+*   **Navegación Anónima**: Intentar acceder a `/pos` o `/admin/inventory` sin un JWT válido redirige de forma inmediata a la pantalla de `/login`.
 
-[x] Interceptor: EXITOSO. authInterceptor añade el token JWT en el header de todas las peticiones de venta.
+### H2: Registro de Ventas e Inmutabilidad (Snapshots)
+*   **Persistencia Histórica**: Si se realiza una venta de un café a $35 y posteriormente el administrador edita el precio del café a $40 en el catálogo, la venta antigua en la base de datos conserva el precio original de $35 en su snapshot, protegiendo las estadísticas contables del negocio.
 
-[x] Gestión de Carrito: Unificación de productId a product_id para cumplir con esquema Zod (evita Error 422).
+### H3: Validación de Existencias en Venta
+*   **Bloqueo de Agotados**: Al acabarse las existencias de un café (stock = 0), la tarjeta en el POS adquiere opacidad, muestra la etiqueta de **"AGOTADO"** y deshabilita el botón de agregar. Intentar saltarse la restricción en el backend retorna un código `400 (Insufficient Stock)`.
 
-[x] Totalizadores: Getter reactivo en el POS muestra el monto exacto antes de confirmar el pago.
+### H4 y H5: Registro de Socios y Fidelización
+*   **Estrategia Get or Create**: Si el cliente no existe al validar su número (retorna `404`), se despliega dinámicamente un campo de texto para escribir su nombre y afiliarlo en la misma transacción sin perder los productos del carrito.
+*   **Descuentos en Escalera**: Un socio con 5 compras previas recibe de forma automatizada un 10% de descuento en el ticket final. El contador de visitas se incrementa en `+1` atómicamente tras concretarse la transacción.
 
-### Historia: H3 - Control de Inventario Reactivo
-Fase 1: Persistencia
-
-[x] Sincronización: Cada venta descuenta unidades reales en MongoDB de forma atómica.
-
-Fase 2: Interfaz de Usuario
-
-[x] Selector de Cantidad: OK. No permite cantidades < 1 ni > al stock disponible.
-
-[x] Reactividad Post-Venta: Al recibir Status 201, la lista de productos actualiza el stock visualmente sin recargar.
-
-[x] Control de Agotado: Al llegar a 0, la tarjeta aplica opacidad, deshabilita el botón y muestra leyenda "SIN STOCK".
-
-### Historia: H1 - Gestión de Catálogo (Admin)
-Fase 1: Verificación de Backend
-
-[x] CRUD de Productos: EXITOSO. Operaciones GET, POST, PUT y DELETE verificadas con el middleware isAdmin.
-
-[x] Blindaje de Datos: Bloqueo de precios/stock negativos y prevención de inyección de texto en campos numéricos.
-
-Fase 2: Interfaz Admin
-
-[x] Renderizado: Uso de semáforo de stock (Rojo/Naranja/Verde) mediante [ngClass].
-
-[x] Formulario Reactivo: Alternancia fluida entre creación y edición con limpieza de estado vía resetForm().
-
-### Historia: H4 - Registro de Clientes y Fidelización (Sprint 03)
-Fase 1: Verificación de Backend
-
-[x] Estrategia Get or Create: EXITOSO. Búsqueda y registro unificado en un solo endpoint.
-
-[x] Lógica de Descuentos: El servidor aplica 5%, 10% o 15% según purchases_count previo.
-
-Fase 2: Verificación de Frontend e Integración
-
-[x] Validación de Captura: EXITOSO. Se intentaron registrar datos mal formados (teléfonos cortos/emails sin @).
-
-Resultado: El sistema detecta el Error 422 y lanza un alert() informativo bloqueando el envío.
-
-[x] Flujo de Registro: EXITOSO. Ante un Error 404 (cliente no encontrado), se habilita el campo de nombre para registro inmediato sin abandonar la venta.
-
-[x] Ticket de Lealtad: FINALIZADO. Visualización correcta de descuentos y mensaje de beneficio de socio en el ticket final.
-
-[x] Limpieza de Sesión: EXITOSO. El SaleFormComponent resetea los datos del cliente tras confirmar la venta, previniendo errores en la siguiente transacción.
+### H10: Sistema Centralizado de Notificaciones (Toasts)
+*   **Reemplazo de Alertas Nativas**: Se validaron flujos erróneos (como intentar afiliar un socio sin nombre o buscar un formato inválido de teléfono). El sistema muestra toasts con animaciones elegantes de advertencia y error en lugar de congelar la pantalla con los diálogos del navegador.
+*   **Toast de Éxito**: Al procesar la transacción o añadir ítems al pedido, se genera una confirmación emergente que desaparece de manera fluida a los 3 segundos.
