@@ -1,30 +1,31 @@
-import Product from '../models/Product.js';
+import * as productService from '../services/productService.js';
 
-async function createProduct(req, res, next) {
+async function getProducts(req, res, next) {
   try {
-    const { name, price, stock } = req.body; 
-    
-    const newProduct = new Product({
-      name,
-      price,
-      stock,
-      created_by: req.user.id
-    });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
 
-    const savedProduct = await newProduct.save();
-    
-    res.status(201).json(savedProduct);
-
+    const result = await productService.getAllProducts({ page, limit });
+    return res.json(result);
   } catch (error) {
     next(error);
   }
-};
+}
+
+async function createProduct(req, res, next) {
+  try {
+    const saved = await productService.saveProduct(req.body, req.user.id);
+    return res.status(201).json(saved);
+  } catch (error) {
+    next(error);
+  }
+}
 
 async function deleteProduct(req, res, next) {
   try {
     const { id } = req.params;
-    const deletedProduct = await Product.findByIdAndDelete(id);
-    res.json(deletedProduct);
+    const deletedProduct = await productService.removeProduct(id);
+    return res.json(deletedProduct);
   } catch (error) {
     next(error);
   }
@@ -35,37 +36,8 @@ async function updateProduct(req, res, next) {
     const { id } = req.params;
     const { name, price, stock } = req.body;
 
-    const updatedProduct = await Product.findByIdAndUpdate(
-      id,
-      { name, price, stock },
-      { new: true }
-    );
-    res.json(updatedProduct);
-  } catch (error) {
-    next(error);
-  }
-}
-
-async function getProducts(req, res, next) {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20; 
-    const skip = (page - 1) * limit;
-
-    const products = await Product.find()
-      .skip(skip)
-      .limit(limit)
-      .sort({ name: 1 });
-
-    const totalResults = await Product.countDocuments();
-
-    res.json({
-      data: products, 
-      total: totalResults,
-      page: page,
-      limit: limit
-    });
-
+    const updatedProduct = await productService.modifyProduct(id, { name, price, stock });
+    return res.json(updatedProduct);
   } catch (error) {
     next(error);
   }
