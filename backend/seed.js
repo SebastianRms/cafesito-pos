@@ -5,11 +5,10 @@ import Product from './src/models/Product.js    ';
 dotenv.config();
 
 const seedProducts = [
-    { name: 'Café Americano', price: 35, stock: 50, category: 'Bebidas' },
-    { name: 'Capuchino', price: 45, stock: 30, category: 'Bebidas' },
-    { name: 'Muffin de Chocolate', price: 25, stock: 15, category: 'Comida' }
+    { name: 'Café Americano', price: 35, stock: 50, category: 'Bebidas', created_by: '6a1f74a68af6f9f576510e40' },
+    { name: 'Capuchino', price: 45, stock: 30, category: 'Bebidas', created_by: '6a1f74a68af6f9f576510e40' },
+    { name: 'Muffin de Chocolate', price: 25, stock: 15, category: 'Comida', created_by: '6a1f74a68af6f9f576510e40' }
 ];
-
 const runSeed = async () => {
     try {
         await mongoose.connect(process.env.DB_CONNECTION_STRING);

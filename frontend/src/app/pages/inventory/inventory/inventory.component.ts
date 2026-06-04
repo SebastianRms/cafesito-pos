@@ -2,6 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ProductService } from '../../../services/product/product.service';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ToastService } from '../../../services/toast/toast.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-inventory',
@@ -12,15 +14,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class InventoryComponent implements OnInit {
   private productService = inject(ProductService);
   private fb = inject(FormBuilder);
+  private toastService = inject(ToastService);
 
-  // Aquí guardaremos los productos que vienen del back
   products: any[] = [];
   productForm: FormGroup;
   isModalOpen = false;
   editingProductId: string | null = null;
 
   constructor() {
-    // Definimos los campos del formulario
     this.productForm = this.fb.group({
       name: ['', [Validators.required]],
       price: [0, [Validators.required, Validators.min(1)]],
@@ -35,27 +36,48 @@ export class InventoryComponent implements OnInit {
   loadProducts() {
     this.productService.getProducts().subscribe({
       next: (res) => {
-        // Guardamos los datos. Recuerda que tu back devuelve { data: [...] }
         this.products = res.data;
       },
       error: (err) => {
         console.error('Error al traer productos:', err);
+        this.toastService.error('Error al cargar la lista de productos.');
       },
     });
   }
 
-  // Por ahora solo deja estas funciones vacías para que no truene el HTML
   deleteProduct(id: string) {
-    if (confirm('¿Eliminar producto?')) {
-      this.productService.deleteProduct(id).subscribe(() => this.loadProducts());
-    }
+    Swal.fire({
+      title: '¿Eliminar producto?',
+      text: 'Esta acción borrará el producto del catálogo definitivamente.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ea580c',
+      cancelButtonColor: '#475569',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      background: '#0f172a',
+      color: '#f1f5f9'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.productService.deleteProduct(id).subscribe({
+          next: () => {
+            this.loadProducts();
+            this.toastService.success('Producto eliminado con éxito.');
+          },
+          error: () => this.toastService.error('No se pudo eliminar el producto del servidor.')
+        });
+      }
+    });
   }
 
   openModal() {
-    console.log('Abriendo modal para crear...');
     this.isModalOpen = true;
     this.editingProductId = null;
-    this.productForm.reset();
+    this.productForm.reset({
+      name: '',
+      price: 0,
+      stock: 0
+    });
   }
 
   closeModal() {
@@ -91,14 +113,18 @@ export class InventoryComponent implements OnInit {
         next: () => {
           this.loadProducts();
           this.closeModal();
-        }
+          this.toastService.success('Producto actualizado en catálogo.');
+        },
+        error: () => this.toastService.error('No se pudo actualizar el producto.')
       });
     } else {
       this.productService.createProduct(productData).subscribe({
         next: () => {
           this.loadProducts();
           this.closeModal();
-        }
+          this.toastService.success('Producto agregado al catálogo.');
+        },
+        error: () => this.toastService.error('No se pudo crear el producto.')
       });
     }
   }

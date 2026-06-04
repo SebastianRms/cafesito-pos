@@ -1,48 +1,57 @@
-<div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
+<div class="max-w-md w-full glass-dark rounded-3xl p-8 border border-white/10 shadow-2xl backdrop-blur-xl animate-fade-in mx-auto">
   
   <div class="text-center mb-8">
-    <h1 class="text-3xl font-black text-slate-800 tracking-tight">Cafecito Feliz</h1>
-    <p class="text-slate-500 font-medium">Registro de Nuevo Usuario</p>
+    <span class="text-4xl block mb-2 animate-bounce">👤</span>
+    <h1 class="text-2xl font-display font-black tracking-tight bg-gradient-to-r from-orange-400 to-amber-300 bg-clip-text text-transparent uppercase">
+      Registrar Operador
+    </h1>
+    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-1">Crear Credenciales de Acceso</p>
   </div>
 
   <form (ngSubmit)="onSubmit()" #registerForm="ngForm" class="space-y-5">
     
     <div>
-      <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre Completo</label>
+      <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Nombre Completo</label>
       <input type="text" name="name" [(ngModel)]="credentials.name" required
-        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-4 focus:ring-orange-100 focus:border-orange-500 outline-none transition-all"
-        placeholder="Ej. Juan Pérez">
+        class="w-full px-4 py-3 bg-slate-950/60 border border-slate-800 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-xs transition duration-200"
+        placeholder="Juan Pérez">
     </div>
 
     <div>
-      <label class="block text-sm font-semibold text-slate-700 mb-1">Correo Electrónico</label>
+      <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Correo Electrónico</label>
       <input type="email" name="email" [(ngModel)]="credentials.email" required email
-        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-4 focus:ring-orange-100 focus:border-orange-500 outline-none transition-all"
-        placeholder="usuario@cafe.com">
+        class="w-full px-4 py-3 bg-slate-950/60 border border-slate-800 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-xs transition duration-200"
+        placeholder="operador@cafecitofeliz.com">
     </div>
 
     <div>
-      <label class="block text-sm font-semibold text-slate-700 mb-1">Contraseña</label>
+      <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Contraseña</label>
       <input type="password" name="password" [(ngModel)]="credentials.password" required minlength="6"
-        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-4 focus:ring-orange-100 focus:border-orange-500 outline-none transition-all"
-        placeholder="••••••••">
+        class="w-full px-4 py-3 bg-slate-950/60 border border-slate-800 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-xs transition duration-200"
+        placeholder="Mínimo 6 caracteres">
     </div>
 
     <div>
-      <label class="block text-sm font-semibold text-slate-700 mb-1">Rol de Usuario</label>
-      <select name="role" [(ngModel)]="credentials.role" required
-        class="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white focus:ring-4 focus:ring-orange-100 focus:border-orange-500 outline-none transition-all appearance-none">
-        <option value="vendor">Vendedor (Acceso a POS)</option>
-        <option value="admin">Administrador (Control Total)</option>
-      </select>
+      <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Rol de Operación</label>
+      <div class="relative">
+        <select name="role" [(ngModel)]="credentials.role" required
+          class="w-full px-4 py-3 bg-slate-950/60 border border-slate-800 text-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-xs transition duration-200 appearance-none">
+          <option value="vendor" class="bg-slate-900 text-white">Vendedor (Acceso a POS)</option>
+          <option value="admin" class="bg-slate-900 text-white">Administrador (Control Total)</option>
+        </select>
+        <!-- Flecha decorativa personalizada -->
+        <span class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-orange-400 text-xs font-black">
+          ▼
+        </span>
+      </div>
     </div>
 
-    <div *ngIf="error" class="p-3 bg-red-50 border border-red-100 rounded-lg text-red-600 text-sm font-bold">
+    <div *ngIf="error" class="p-3 bg-rose-950/40 border border-rose-500/20 rounded-xl text-rose-300 text-xs font-bold animate-fade-in">
       ⚠️ {{ error }}
     </div>
 
     <button type="submit" [disabled]="!registerForm.valid"
-      class="w-full bg-slate-800 hover:bg-slate-900 disabled:bg-slate-300 text-white font-bold py-4 rounded-xl shadow-lg transition-all">
+      class="w-full bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 text-white font-display font-black text-xs uppercase tracking-widest py-4 rounded-xl shadow-lg shadow-orange-950/20 transition-all cursor-pointer disabled:cursor-not-allowed active:scale-97">
       Crear Cuenta
     </button>
   </form>

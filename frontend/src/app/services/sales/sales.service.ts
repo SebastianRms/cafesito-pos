@@ -7,10 +7,10 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class SalesService {
   private http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3001/api';
+  private readonly apiUrl = 'http://localhost:3000/api';
 
-  getProducts(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/products`);
+  getProducts(page: number = 1, limit: number = 12): Observable<any> {
+    return this.http.get(`${this.apiUrl}/products?page=${page}&limit=${limit}`);
   }
 
   searchCustomer(query: string): Observable<any> {

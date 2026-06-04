@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class CustomerService {
   private http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3001/api/customers';
+  private readonly apiUrl = 'http://localhost:3000/api/customers';
 
   
   getOrCreate(data: { phone_or_email: string; name?: string }): Observable<any> {

@@ -1,8 +1,14 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, input, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaymentMethod } from '../../../services/sales/sales.service';
-import { CustomerService } from '../../../services/customer/customers.service';
+import { ToastService } from '../../../services/toast/toast.service';
+
+export interface ConfirmSaleEvent {
+  method: PaymentMethod;
+  customerInput: string;
+  customerName?: string;
+}
 
 @Component({
   selector: 'app-sale-form',
@@ -12,83 +18,50 @@ import { CustomerService } from '../../../services/customer/customers.service';
   styleUrl: './sale-form.component.css'
 })
 export class SaleFormComponent {
-  private customerService = inject(CustomerService);
+  private toastService = inject(ToastService);
 
-  @Output() onConfirm = new EventEmitter<{ method: PaymentMethod, customer_id?: string }>();
+  readonly selectedCustomer = input<any | null>(null);
+  readonly isNewCustomer = input<boolean>(false);
+  readonly errorMessage = input<string>('');
+
+  readonly searchCustomerEvent = output<string>();
+  readonly confirmSaleEvent = output<ConfirmSaleEvent>();
+  readonly resetCustomerEvent = output<void>();
 
   method: PaymentMethod = 'cash';
-
   customerInput: string = '';   
   customerName: string = '';    
-  isNewCustomer: boolean = false;
-  selectedCustomer: any = null;
-  errorMessage: string = '';
 
-  
   setMethod(m: PaymentMethod): void {
     this.method = m;
   }
 
-  
   searchCustomer(): void {
-    const input = this.customerInput.trim();
-    if (!input) return;
-
-    this.errorMessage = '';
-    
-    this.customerService.getOrCreate({ phone_or_email: input }).subscribe({
-      next: (customer) => {
-        this.selectedCustomer = customer;
-        this.isNewCustomer = false;
-        this.customerName = customer.name;
-        this.errorMessage = '';
-      },
-      error: (err) => {
-        if (err.status === 404) {
-          this.isNewCustomer = true;
-          this.selectedCustomer = null;
-          this.customerName = ''; 
-        } else {
-          this.errorMessage = 'Formato inválido. Usa 10 dígitos o un correo válido.';
-        }
-      }
-    });
+    const inputVal = this.customerInput.trim();
+    if (!inputVal) {
+      this.toastService.warning('Por favor, ingresa un teléfono o correo electrónico.');
+      return;
+    }
+    this.searchCustomerEvent.emit(inputVal);
   }
 
   confirmSale(): void {
-    if (this.isNewCustomer && !this.customerName.trim()) {
-      alert("Por favor, ingresa el nombre para registrar al cliente nuevo.");
+    if (this.isNewCustomer() && !this.customerName.trim()) {
+      this.toastService.warning('Por favor, ingresa el nombre para registrar al nuevo socio.');
       return;
     }
 
-    if (this.isNewCustomer) {
-      this.customerService.getOrCreate({ 
-        phone_or_email: this.customerInput, 
-        name: this.customerName 
-      }).subscribe({
-        next: (newCustomer) => {
-          this.onConfirm.emit({ 
-            method: this.method, 
-            customer_id: newCustomer._id 
-          });
-          this.clearCustomer(); 
-        },
-        error: () => alert("Error al registrar el cliente.")
-      });
-    } else {
-      this.onConfirm.emit({ 
-        method: this.method, 
-        customer_id: this.selectedCustomer?._id 
-      });
-      this.clearCustomer(); 
-    }
+    this.confirmSaleEvent.emit({
+      method: this.method,
+      customerInput: this.customerInput,
+      customerName: this.isNewCustomer() ? this.customerName : undefined
+    });
   }
 
   clearCustomer(): void {
     this.customerInput = '';
     this.customerName = '';
-    this.isNewCustomer = false;
-    this.selectedCustomer = null;
-    this.errorMessage = '';
+    this.method = 'cash';
+    this.resetCustomerEvent.emit();
   }
 }

@@ -1,24 +1,12 @@
-import User from '../models/User.js';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import * as authService from '../services/authService.js';
 
 export const register = async (req, res, next) => {
   try {
     const { email, password, name, role } = req.body;
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    await authService.registerUser({ email, password, name, role });
 
-    const newUser = new User({
-      name,
-      email,
-      hash_password: hashedPassword,
-      role
-    });
-
-    await newUser.save();
-
-    res.status(201).json({ message: "User registered successfully" });
+    return res.status(201).json({ message: "User registered successfully" });
 
   } catch (error) {
     next(error); 
@@ -27,34 +15,17 @@ export const register = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+        const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+        const data = await authService.loginUser({ email, password });
+
+        return res.status(200).json(data);
+
+    } catch (error) {
+        if (error.message === 'INVALID_CREDENTIALS') {
+            return res.status(401).json({ message: "Invalid email or password" });
+        }
+        
+        next(error);
     }
-
-    const isMatch = await bcrypt.compare(password, user.hash_password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
-
-    const token = jwt.sign(
-      { id: user._id, role: user.role }, 
-      process.env.JWT_SECRET, 
-      { expiresIn: '8h' } 
-    );
-
-    res.status(200).json({
-      token,
-      user: {
-        id: user._id,
-        display_name: user.display_name,
-        role: user.role
-      }
-    });
-
-  } catch (error) {
-    next(error);
-  }
 };

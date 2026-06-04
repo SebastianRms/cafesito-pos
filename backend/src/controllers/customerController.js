@@ -1,13 +1,12 @@
-import Customer from '../models/Customer.js';
+import * as customerService from "../services/customerService.js";
 
 export const getOrCreateCustomer = async (req, res, next) => {
   try {
     const { phone_or_email, name } = req.body;
 
-    const existingCustomer = await Customer.findOne({ phone_or_email });
-
-    if (existingCustomer) {
-      return res.status(200).json(existingCustomer);
+    const customer = await customerService.existingcustomer({ phone_or_email });
+    if (customer) {
+      return res.status(200).json(customer);
     }
 
     if (!name) {
@@ -17,15 +16,13 @@ export const getOrCreateCustomer = async (req, res, next) => {
       });
     }
 
-    const newCustomer = new Customer({
-      name,
-      phone_or_email,
-      purchases_count: 0, 
-      created_by: req.user.id
+    const newCustomer = await customerService.createCustomer({ 
+      name, 
+      phone_or_email, 
+      created_by: req.user.id 
     });
 
-    const savedCustomer = await newCustomer.save();
-    res.status(201).json(savedCustomer);
+    return res.status(201).json(newCustomer);
 
   } catch (error) {
     next(error);
