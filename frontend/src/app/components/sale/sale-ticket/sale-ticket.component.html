@@ -1,57 +1,65 @@
-<div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-  <div class="bg-white w-full max-w-sm rounded-lg shadow-2xl overflow-hidden font-mono text-sm border-t-8 border-orange-600">
+<div class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-[9999] p-4 animate-fade-in">
+  <div class="glass-dark w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden font-mono text-sm border border-orange-500/30">
     <div class="p-6">
-      <div class="text-center mb-4">
-        <h3 class="text-xl font-black uppercase text-slate-800">{{ ticket.storeName }}</h3>
-        <p class="text-xs text-slate-500">{{ ticket.timestamp | date:'medium' }}</p>
-        <p class="text-[10px] text-slate-400">ID: {{ ticket.saleId }}</p>
+      
+      <!-- Detalle superior del ticket -->
+      <div class="text-center mb-6">
+        <span class="text-3xl block mb-2">☕</span>
+        <h3 class="text-xl font-display font-black uppercase text-white tracking-wide">{{ ticket.storeName }}</h3>
+        <p class="text-[10px] text-slate-500 mt-1">{{ ticket.timestamp | date:'medium' }}</p>
+        <p class="text-[9px] text-orange-400/70 mt-0.5">TICKET: {{ ticket.saleId }}</p>
       </div>
 
-      <div class="border-b border-dashed border-slate-300 my-4"></div>
+      <!-- Línea discontinua con cristal -->
+      <div class="border-b border-dashed border-slate-800 my-4"></div>
 
-      <table class="w-full mb-4">
+      <!-- Items comprados -->
+      <table class="w-full mb-4 text-slate-300">
         <thead>
-          <tr class="text-left text-[10px] uppercase text-slate-400">
-            <th class="pb-2">Cant/Prod</th>
-            <th class="pb-2 text-right">Total</th>
+          <tr class="text-left text-[9px] uppercase text-slate-500 tracking-wider">
+            <th class="pb-2">Cant / Descripción</th>
+            <th class="pb-2 text-right">Subtotal</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="divide-y divide-slate-900/50">
           @for (item of ticket.items; track $index) {
             <tr>
-              <td class="py-1">
-                <span class="font-bold">{{ item.qty }}x</span> {{ item.name }}
-                <span class="block text-[10px] text-slate-400">${{ item.unitPrice }} c/u</span>
+              <td class="py-2.5">
+                <span class="font-bold text-orange-400">{{ item.qty }}x</span> {{ item.name }}
+                <span class="block text-[9px] text-slate-500 font-sans mt-0.5">${{ item.unitPrice }} c/u</span>
               </td>
-              <td class="py-1 text-right align-top">${{ item.lineTotal }}</td>
+              <td class="py-2.5 text-right align-top font-bold">${{ item.lineTotal }}</td>
             </tr>
           }
         </tbody>
       </table>
 
-      <div class="border-b border-dashed border-slate-300 my-4"></div>
+      <!-- Línea discontinua -->
+      <div class="border-b border-dashed border-slate-800 my-4"></div>
 
-      <div class="space-y-1">
-        <div class="flex justify-between">
+      <!-- Totales y descuentos -->
+      <div class="space-y-1.5 text-slate-400">
+        <div class="flex justify-between text-xs">
           <span>Subtotal:</span>
-          <span>${{ ticket.subtotal }}</span>
+          <span class="font-bold">${{ ticket.subtotal }}</span>
         </div>
-        <div class="flex justify-between text-orange-600 font-bold">
-          <span>Desc:</span>
-          <span>{{ ticket.discount }}</span>
+        <div class="flex justify-between text-xs text-orange-400">
+          <span>Descuento Aplicado:</span>
+          <span class="font-black">{{ ticket.discount }}</span>
         </div>
-        <div class="flex justify-between text-lg font-black border-t border-slate-800 pt-2 mt-2">
-          <span>TOTAL:</span>
-          <span>${{ ticket.total }}</span>
+        <div class="flex justify-between text-base font-black border-t border-slate-800 pt-3 mt-3 text-white">
+          <span class="font-display">TOTAL COBRADO:</span>
+          <span class="text-orange-400 font-mono text-lg">${{ ticket.total }}</span>
         </div>
       </div>
 
-      <p class="text-center text-[10px] mt-6 text-slate-400 italic">¡Gracias por su compra en Cafecito Feliz!</p>
+      <p class="text-center text-[9px] mt-8 text-slate-500 italic tracking-wide">¡Gracias por tu preferencia en Cafecito Feliz!</p>
     </div>
 
+    <!-- Botón Nueva Venta -->
     <button (click)="onClose.emit()" 
-      class="w-full bg-slate-800 hover:bg-slate-900 text-white py-4 font-bold uppercase tracking-widest transition-colors">
-      Nueva Venta
+      class="w-full bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white py-4.5 font-display font-black text-xs uppercase tracking-widest transition-colors cursor-pointer border-t border-orange-500/10">
+      Cerrar y Nueva Venta
     </button>
   </div>
 </div>
